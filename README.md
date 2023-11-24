@@ -1,5 +1,15 @@
 # 12-factor-app
 
+## Original repos
+
+```shell
+# distributed-calculator
+https://github.com/dapr/quickstarts
+
+# dapr-distributed-calendar
+https://github.com/dapr/samples
+```
+
 ## distributed-calculator
 
 The distributed-calculator works, but we do not have any delete operations, but we got PUT and Get statements:
