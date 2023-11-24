@@ -1,0 +1,112 @@
+version: '3'
+services:
+  ############################
+  # Node app + Dapr sidecar
+  ############################
+  controller:
+    build: .
+    ports:
+      - "3001:3000"
+      - "50002:50002"
+    depends_on:
+      - redis
+      - placement
+    networks:
+      - dapr-callendar-network
+  controller-dapr:
+    image: "daprio/daprd:edge"
+    command: ["./daprd",
+     "-app-id", "controller",
+     "-app-port", "3000",
+     "-placement-host-address", "placement:50006",
+     "-dapr-http-port", "3500",
+     "-dapr-grpc-port", "50002",
+     "-components-path", "/components"]
+    volumes:
+      - "./components/:/components"
+    depends_on:
+      - controller
+    network_mode: "service:controller"
+  ############################
+  # Python app + Dapr sidecar
+  ############################
+  messages:
+    build: ./python
+    depends_on:
+      - redis
+      - placement
+    networks:
+      - dapr-callendar-network
+  pythonapp-dapr:
+    image: "daprio/daprd:edge"
+    command: ["./daprd",
+     "-app-id", "messages",
+     "-app-port", "5000",    
+     "-placement-host-address", "placement:50006",
+     "-dapr-http-port", "3501",
+     "-components-path", "/components"]
+    volumes:
+      - "./components/:/components"
+    depends_on:
+      - messages
+    network_mode: "service:messages"
+  ############################
+  # Go app + Dapr sidecar
+  ############################
+  go-events:
+    build: ./go
+    depends_on:
+      - redis
+      - placement
+    networks:
+      - dapr-callendar-network
+  go-events-dapr:
+    image: "daprio/daprd:edge"
+    command: ["./daprd",
+     "-app-id", "go-events",
+     "-app-port", "6000",
+     "-placement-host-address", "placement:50006",
+     "-dapr-http-port", "3503",
+     "-components-path", "/components"]
+    volumes:
+      - "./components/:/components"
+    depends_on:
+      - go-events
+    network_mode: "service:go-events"
+  ############################
+  # Dapr placement service
+  ############################
+  placement:
+    image: "daprio/dapr"
+    command: ["./placement", "-port", "50006"]
+    ports:
+      - "50006:50006"
+    networks:
+      - dapr-callendar-network
+  ############################
+  # Redis state store
+  ############################
+  # redis:
+  #   image: "redis:alpine"
+  #   ports:
+  #     - "6380:6379"
+  #   networks:
+  #     - dapr-callendar-network
+  redis:
+    image: docker.io/bitnami/redis:7.2
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    networks:
+      - dapr-callendar-network
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+
+volumes:
+  redis_data:
+    driver: local
+networks:
+    dapr-callendar-network:
