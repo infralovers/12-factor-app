@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: add
-        image: ghcr.io/dapr/samples/distributed-calculator-go:latest
+        image: mati007thm/distributed-calculator-go:latest
         env:
         - name: APP_PORT
           value: "6000"
