@@ -2,6 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Configuration
 metadata:
   name: appconfig
+  namespace: 12-factor-app
 spec:
   tracing:
     samplingRate: "1"

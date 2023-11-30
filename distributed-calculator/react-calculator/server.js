@@ -82,6 +82,43 @@ app.get('/state', async (req, res) => {
   }
 });
 
+// Update state stored in Dapr state endpoint
+app.put('/state', async (req, res) => {
+  try {
+    // Fetching current state from Dapr state
+    const currentStateResponse = await axios.get(`${stateUrl}/calculatorState`);
+    const currentState = currentStateResponse.data;
+    console.log("Before the update", currentState);
+    // Merging the existing state with the incoming data
+    const updatedState = {
+      ...currentState,
+      ...req.body,
+    };
+    console.log("After the update", updatedState);
+    const data = [{"key": "calculatorState", "value": updatedState}]
+
+
+    // Updating Dapr state
+    const apiResponse = await axios.put(`${stateUrl}`, data);
+
+    return res.send(apiResponse.data);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+// Delete state stored in Dapr state endpoint
+app.delete('/state', async (req, res) => {
+  try {
+    // Deleting Dapr state
+    const apiResponse = await axios.delete(`${stateUrl}/calculatorState`);
+
+    return res.send(apiResponse.data);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 // Forward state persistence to Dapr state endpoint
 app.post('/persist', async (req, res) => {
   try {

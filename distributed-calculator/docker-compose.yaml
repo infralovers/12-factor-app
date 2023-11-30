@@ -84,7 +84,7 @@ services:
   calculator:
     build: ./react-calculator
     ports:
-      - "8080:8080"
+      - "8000:8080"
       - "3500"
       - "50001"
     depends_on:

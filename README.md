@@ -12,31 +12,39 @@ https://github.com/dapr/samples
 
 ## distributed-calculator
 
-The distributed-calculator works, but we do not have any delete operations, but we got PUT and Get statements:
+The distributed-calculator works, and I added DELETE and PUT to the already existing POST and GET requests:
 
-   ```bash
-   curl -s http://localhost:8080/calculate/add -H Content-Type:application/json --data @operands.json
-   ```
+```bash
+curl -s http://localhost:8000/calculate/add -H Content-Type:application/json --data @operands.json
+```
 
-   ```bash
-   curl -s http://localhost:8080/calculate/subtract -H Content-Type:application/json --data @operands.json
-   ```
+```bash
+curl -s http://localhost:8000/calculate/subtract -H Content-Type:application/json --data @operands.json
+```
 
-   ```bash
-   curl -s http://localhost:8080/calculate/divide -H Content-Type:application/json --data @operands.json
-   ```
+```bash
+curl -s http://localhost:8000/calculate/divide -H Content-Type:application/json --data @operands.json
+```
 
-   ```bash
-   curl -s http://localhost:8080/calculate/multiply -H Content-Type:application/json --data @operands.json
-   ```
+```bash
+curl -s http://localhost:8000/calculate/multiply -H Content-Type:application/json --data @operands.json
+```
 
-   ```bash
-   curl -s http://localhost:8080/persist -H Content-Type:application/json --data @persist.json
-   ```
+```bash
+curl -s http://localhost:8000/persist -H Content-Type:application/json --data @persist.json
+```
 
-   ```bash
-   curl -s http://localhost:8080/state
-   ```
+```bash
+curl -s http://localhost:8000/state
+```
+
+```bash
+curl -s -X PUT http://localhost:8000/state -H 'Content-Type: application/json' --data-raw '{"next": "12", "operation": "-" }' 
+```
+
+```bash
+curl -s -X DELETE http://localhost:8000/state 
+```
 
 ## dapr-distributed-calendar
 

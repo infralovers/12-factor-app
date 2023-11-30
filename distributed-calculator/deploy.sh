@@ -15,6 +15,9 @@ find examples* -type f -exec sed -i -e "s/<ENV-NAME>/$ENVIRONMENT/g" {} \;
 # Replace <ENV-DOMAIN>
 find examples* -type f -exec sed -i -e "s/<ENV-DOMAIN>/$DOMAIN/g" {} \;
 
+# create namespace
+kubectl create namespace 12-factor-app
+
 # install redis
 helm install redis oci://registry-1.docker.io/bitnamicharts/redis --namespace 12-factor-app
 

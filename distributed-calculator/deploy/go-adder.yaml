@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: addapp
+  namespace: 12-factor-app
   labels:
     app: add
 spec:
