@@ -6,7 +6,9 @@ services:
   divide:
     build: ./node
     ports:
-      - 4000:4000
+      - "4000"
+    deploy:
+      replicas: 2
     depends_on:
       - redis
       - placement
@@ -30,7 +32,9 @@ services:
   multiply:
     build: ./python
     ports:
-      - 5001:5001
+      - "5001"
+    deploy:
+      replicas: 2
     depends_on:
       - redis
       - placement
@@ -54,7 +58,9 @@ services:
   add:
     build: ./go
     ports:
-      - 6000:6000
+      - "6000"
+    deploy:
+      replicas: 2
     depends_on:
       - redis
       - placement
@@ -78,9 +84,9 @@ services:
   calculator:
     build: ./react-calculator
     ports:
-      - 8080:8080
-      - 3500:3500
-      - 50001:50001
+      - "8080:8080"
+      - "3500"
+      - "50001"
     depends_on:
       - redis
       - placement
@@ -106,9 +112,9 @@ services:
   subtract:
     build: ./csharp
     ports:
-      - 80:80
-      # - 3500:3500
-      # - 50001:50001
+      - "80"
+    deploy:
+      replicas: 2
     depends_on:
       - redis
       - placement
