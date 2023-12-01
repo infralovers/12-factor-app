@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: multiply
-        image: ghcr.io/dapr/samples/distributed-calculator-slow-python:latest
+        image: mati007thm/distributed-calculator-python:latest
         env:
         - name: "APP_PORT"
           value: "5001"

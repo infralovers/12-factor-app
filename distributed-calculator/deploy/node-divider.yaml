@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: divide
-        image: ghcr.io/dapr/samples/distributed-calculator-node:latest
+        image: mati007thm/distributed-calculator-node:latest
         env:
         - name: APP_PORT
           value: "4000"

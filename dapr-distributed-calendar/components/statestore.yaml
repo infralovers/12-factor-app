@@ -9,6 +9,6 @@ spec:
   - name: redisHost
     value: redis:6379
   - name: redisPassword
-    value: "Cod3Can!"
+    value: ""
   - name: actorStateStore
     value: "true"

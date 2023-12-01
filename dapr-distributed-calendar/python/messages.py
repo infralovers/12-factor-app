@@ -18,16 +18,29 @@ def subscribe():
                       'topic': 'events-topic',
                       'route': 'getmsg'}]
     return jsonify(subscriptions)
-
+        
 # subscriber acts as a listener for the topic events-topic
 @app.route('/getmsg', methods=['POST'])
 def subscriber():
-    print(request.json, flush=True)
     jsonRequest = request.json
-    # Check if "data" and "message" keys are present before accessing
-    if 'data' in jsonRequest and 'message' in jsonRequest['data']:
-        data = jsonRequest['data']['message']
+    # remove first data segment from {'data': {'data': {'message': {'date': 'TBD', 'id': '1', 'name': 'Uninstall Event'}}}
+    # Check if 'data' key exists in the JSON payload
+    if 'data' in jsonRequest:
+        inner_data = jsonRequest['data'].get('data')
+
+    # Update the JSON payload with the inner 'data' dictionary
+    if inner_data:
+        jsonRequest['data'] = inner_data
+    # data = jsonRequest["data"]["message"]
+    # Check if 'data' and 'message' keys are present
+    data = jsonRequest.get("message")
+
+    if data is not None:
         print(data, flush=True)
+        # send_email()
+    else:
+        print("'message' key not found in JSON payload.", flush=True)
+
     return jsonify({"status": "success"})
 
 app.run()
