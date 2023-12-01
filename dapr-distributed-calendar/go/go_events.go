@@ -7,11 +7,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
 
-var daprPort = "3503"
+var daprPort = os.Getenv("DAPR_HTTP_PORT") // Dapr's default is 3500 if not configured
 
 const stateStoreName = `events`
 
@@ -78,10 +79,36 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	log.Printf(string(bodyBytes))
 }
 
+func getEvent(w http.ResponseWriter, r *http.Request) {
+	type Identity struct {
+		ID string
+	}
+	var eventID Identity
+
+	err := json.NewDecoder(r.Body).Decode(&eventID)
+	if err != nil {
+		log.Printf("Error decoding id")
+	}
+	getURL := stateURL + "/" + eventID.ID
+	req, err := http.NewRequest(http.MethodGet, getURL, nil)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalln("Error getting event", err)
+	}
+	log.Printf("Response after get call: %s", resp.Status)
+
+	defer resp.Body.Close()
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+
+	log.Printf(string(bodyBytes))
+}
+
 func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/addEvent", addEvent).Methods("POST")
 	router.HandleFunc("/deleteEvent", deleteEvent).Methods("POST")
+	router.HandleFunc("/getEvent", getEvent).Methods("POST")
 	log.Fatal(http.ListenAndServe(":6000", router))
 }

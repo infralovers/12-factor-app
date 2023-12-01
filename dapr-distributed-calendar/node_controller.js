@@ -6,7 +6,7 @@ require('isomorphic-fetch');
 const app = express();
 app.use(bodyParser.json());
 
-const daprPort = 3500;
+const daprPort = process.env.DAPR_HTTP_PORT || 3500;
 
 const eventApp = `go-events`;
 const invokeUrl = `http://localhost:${daprPort}/v1.0/invoke/${eventApp}/method`;
@@ -30,7 +30,7 @@ function send_notif(data) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(message),
+        body: JSON.stringify(message),      
     })
     .then((response) => {
         if (!response.ok) {
@@ -94,5 +94,29 @@ app.delete('/event/:id', (req, res) => {
     });    
 });
 
+app.get('/event/:id', (req, res) =>{
+    const key = req.params.id;      
+    console.log('Invoke Get for ID ' + key);         
+
+    var obj = {"id" : key};
+    console.log("Data passed as body to Go", JSON.stringify(obj))
+    fetch (invokeUrl+'/getEvent', {
+        method: "POST",  
+        body: JSON.stringify(obj),  
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then((response) => {
+        if (!response.ok) {
+            throw "Failed to get state.";
+        }
+
+        console.log("Successfully got state.");
+        res.status(200).send();
+    }).catch((error) => {
+        console.log(error);
+        res.status(500).send({message: error});
+    });
+})
 
 app.listen(port, () => console.log(`Node App listening on port ${port}!`));
