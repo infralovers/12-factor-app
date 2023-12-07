@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 require('isomorphic-fetch');
 
 const app = express();
+// const { HTTP } = require("cloudevents");
 app.use(bodyParser.json());
 
 const daprPort = process.env.DAPR_HTTP_PORT || 3500;
@@ -16,6 +17,22 @@ const pubsub_name = 'pubsub'
 const publishUrl = `http://localhost:${daprPort}/v1.0/publish/${pubsub_name}/${topic}`;
 
 const port = 3000;
+
+// app.get('/dapr/subscribe', (_req, res) => {
+//     res.json([
+//         {
+//             pubsubname: "pubsub",
+//             topic: "events-topic",
+//             route: "getmsg"
+//         }
+//     ]);
+// });
+
+// app.post('/getmsg', (req, res) => {
+//     const receivedEvent = HTTP.toEvent({ headers: req.headers, body: req.body });
+//     console.log(receivedEvent);
+//     res.sendStatus(200);
+//   });
 
 function send_notif(data) {
     var message = {
@@ -110,7 +127,6 @@ app.get('/event/:id', (req, res) =>{
         if (!response.ok) {
             throw "Failed to get state.";
         }
-
         console.log("Successfully got state.");
         res.status(200).send();
     }).catch((error) => {

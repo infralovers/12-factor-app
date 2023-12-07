@@ -31,6 +31,7 @@ func addEvent(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&event)
 	if err != nil {
 		log.Printf("Error while decoding: %e", err)
+		return
 	}
 	log.Printf("Event Name: %s", event.Name)
 	log.Printf("Event Date: %s", event.Date)
@@ -47,7 +48,7 @@ func addEvent(w http.ResponseWriter, r *http.Request) {
 	resp, err := http.Post(stateURL, "application/json", bytes.NewBuffer(state))
 	if err != nil {
 		log.Fatalln("Error posting to state", err)
-		http.Error(w, "Failed to write to store", http.StatusServiceUnavailable)
+		return
 	}
 	log.Printf("Response after posting to state: %s", resp.Status)
 	http.Error(w, "All Okay", http.StatusOK)
@@ -70,6 +71,7 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatalln("Error deleting event", err)
+		return
 	}
 	log.Printf("Response after delete call: %s", resp.Status)
 
@@ -81,25 +83,35 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 
 func getEvent(w http.ResponseWriter, r *http.Request) {
 	type Identity struct {
-		ID string
+		ID string `json:"id"`
 	}
 	var eventID Identity
 
 	err := json.NewDecoder(r.Body).Decode(&eventID)
 	if err != nil {
 		log.Printf("Error decoding id")
+		return
 	}
 	getURL := stateURL + "/" + eventID.ID
 	req, err := http.NewRequest(http.MethodGet, getURL, nil)
+	if err != nil {
+		log.Fatalln("Error creating get request", err)
+		return
+	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatalln("Error getting event", err)
+		return
 	}
 	log.Printf("Response after get call: %s", resp.Status)
 
 	defer resp.Body.Close()
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return
+	}
 
 	log.Printf(string(bodyBytes))
 }
