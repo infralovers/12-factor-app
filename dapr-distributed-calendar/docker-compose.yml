@@ -4,7 +4,7 @@ services:
   # Node app + Dapr sidecar
   ############################
   controller:
-    build: .
+    build: ./node
     ports:
       - "3000:3000"
       - "3500"

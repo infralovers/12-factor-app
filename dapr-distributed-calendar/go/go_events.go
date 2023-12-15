@@ -26,6 +26,7 @@ type Event struct {
 }
 
 func addEvent(w http.ResponseWriter, r *http.Request) {
+	log.Printf(stateURL)
 	var event Event
 
 	err := json.NewDecoder(r.Body).Decode(&event)
