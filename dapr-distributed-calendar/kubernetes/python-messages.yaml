@@ -28,13 +28,22 @@ spec:
       containers:
       - name: messages
         image: mati007thm/dapr-distributed-calendar_messages:latest
+        # image: mati007thm/dapr-distributed-calendar_messages:woOtel
         env:
+        # - name: OTEL_SERVICE_NAME
+        #   value: "messages"
+        # - name: OTEL_TRACES_EXPORTER
+        #   value: console,otlp
+        # - name: OTEL_METRICS_EXPORTER
+        #   value: console,otlp
+        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        #   value: http://otel-dapr-collector:4317
+        # - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        #   value: http://otel-dapr-collector:4318
         - name: "APP_PORT"
           value: "5000"
         - name: FLASK_RUN_PORT
           value: "5000"
-        # - name: OTEL_SERVICE_NAME
-        #   value: "messages"
         ports:
         - containerPort: 5000
         imagePullPolicy: Always

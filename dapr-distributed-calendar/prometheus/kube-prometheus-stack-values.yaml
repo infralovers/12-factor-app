@@ -15,16 +15,8 @@ prometheus:
               # names: [12-factor-app]
         relabel_configs:
           - source_labels: [__meta_kubernetes_pod_annotation_dapr_collector_demo]
-          # - source_labels: [meta_kubernetes_pod_label_dapr_io_metrics_enabled]
             action: keep
             regex: true
-      - job_name: dapr-demo
-        honor_labels: true
-        kubernetes_sd_configs:
-        - namespaces:
-            own_namespace: true
-            names: [dapr-system, kube-system]
-          role: pod
       - job_name: 'traefik'
         honor_labels: true
         kubernetes_sd_configs:

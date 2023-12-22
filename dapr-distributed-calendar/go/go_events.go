@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -77,7 +77,7 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Response after delete call: %s", resp.Status)
 
 	defer resp.Body.Close()
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, _ := io.ReadAll(resp.Body)
 
 	log.Printf(string(bodyBytes))
 }
@@ -108,7 +108,7 @@ func getEvent(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Response after get call: %s", resp.Status)
 
 	defer resp.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Printf("Error reading response body: %v", err)
 		return

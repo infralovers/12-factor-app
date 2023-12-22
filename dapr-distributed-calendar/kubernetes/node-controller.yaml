@@ -31,7 +31,7 @@ spec:
       labels:
         app: controller
       annotations:
-        instrumentation.opentelemetry.io/inject-nodejs: "node-instrumentation"
+        # instrumentation.opentelemetry.io/inject-nodejs: "node-instrumentation"
         dapr.io/enabled: "true"
         dapr.io/app-id: "controller"
         dapr.io/app-port: "3000"
@@ -43,12 +43,14 @@ spec:
     spec:
       containers:
       - name: controller
-        image: mati007thm/dapr-distributed-calendar_controller:latest
+        image: mati007thm/dapr-distributed-calendar_controller:manual
         env:
         - name: APP_PORT
           value: "3000"
-        - name: OTEL_SERVICE_NAME
-          value: "controller"
+        # - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        #   value: "otel-dapr-collector:4317"
+        # - name: OTEL_SERVICE_NAME
+        #   value: "controller"
         ports:
         - containerPort: 3000
         imagePullPolicy: Always

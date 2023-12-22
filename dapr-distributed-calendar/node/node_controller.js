@@ -18,6 +18,13 @@ const publishUrl = `http://localhost:${daprPort}/v1.0/publish/${pubsub_name}/${t
 
 const port = 3000;
 
+const opentelemetry = require('@opentelemetry/api');
+
+const myMeter = opentelemetry.metrics.getMeter('controller');
+
+const newEventCounter = myMeter.createCounter('newEvents.counter');
+const getEventCounter = myMeter.createCounter('getEvents.counter');
+const deleteEventCounter = myMeter.createCounter('deleteEvents.counter');
 // app.get('/dapr/subscribe', (_req, res) => {
 //     res.json([
 //         {
@@ -61,6 +68,7 @@ function send_notif(data) {
 }
 
 app.post('/newevent', (req, res) => {
+    newEventCounter.add(1);
     const data = req.body.data;
     const eventId = data.id;
     console.log("New event registration! Event ID: " + eventId);
@@ -87,6 +95,7 @@ app.post('/newevent', (req, res) => {
 });
 
 app.delete('/event/:id', (req, res) => {  
+    deleteEventCounter.add(1);
     const key = req.params.id;      
     console.log('Invoke Delete for ID ' + key);         
 
@@ -112,6 +121,7 @@ app.delete('/event/:id', (req, res) => {
 });
 
 app.get('/event/:id', (req, res) =>{
+    getEventCounter.add(1);
     const key = req.params.id;      
     console.log('Invoke Get for ID ' + key);         
 

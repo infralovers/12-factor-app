@@ -11,16 +11,3 @@ spec:
       endpointAddress: otel-dapr-collector:4317
       isSecure: false
       protocol: grpc
-  # metrics:
-  #   enabled: true
-  #   rules:
-  #     - name: dapr_runtime_service_invocation_req_sent_total
-  #       labels:
-  #       - name: method
-  #         regex:
-  #           "orders/": "orders/.+" # match all methods under orders
-  # logging:
-  #   apiLogging:
-  #     enabled: true
-  #     obfuscateURLs: true
-  #     omitHealthChecks: true

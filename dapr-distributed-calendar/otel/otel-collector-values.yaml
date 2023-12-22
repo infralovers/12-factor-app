@@ -1,109 +1,9 @@
-# mode: deployment
-# replicaCount: 1
-# podAnnotations:
-#   dapr_collector_demo: "true"
-# config:
-#   exporters:
-#     # NOTE: Prior to v0.86.0 use `logging` instead of `debug`.
-#     debug: {}
-#     otlp/jaeger:
-#       endpoint: simplest-collector:4317
-#       tls:
-#           insecure: true
-#     prometheus:
-#         enable_open_metrics: true
-#         endpoint: 0.0.0.0:9464
-#         resource_to_telemetry_conversion:
-#           enabled: true
-
-#   extensions:
-#     health_check: {}
-#     memory_ballast:
-#       size_in_percentage: 40
-#   processors:
-#     batch: {}
-#     memory_limiter:
-#       check_interval: 5s
-#       limit_percentage: 80
-#       spike_limit_percentage: 25
-#   receivers:
-#     jaeger:
-#       protocols:
-#         grpc:
-#           endpoint: ${env:MY_POD_IP}:14250
-#         thrift_compact:
-#           endpoint: ${env:MY_POD_IP}:6831
-#         thrift_http:
-#           endpoint: ${env:MY_POD_IP}:14268
-#     otlp:
-#       protocols:
-#         grpc:
-#           endpoint: ${env:MY_POD_IP}:4317
-#         http:
-#           endpoint: ${env:MY_POD_IP}:4318
-#     prometheus:
-#       config:
-#         scrape_configs:
-#           - job_name: opentelemetry-collector
-#             scrape_interval: 10s
-#             static_configs:
-#               - targets:
-#                   - ${env:MY_POD_IP}:8888
-#     zipkin:
-#       endpoint: ${env:MY_POD_IP}:9411
-#   service:
-#     extensions:
-#       - health_check
-#       - memory_ballast
-#     pipelines:
-#       logs:
-#         exporters:
-#           - debug
-#         processors:
-#           - memory_limiter
-#           - batch
-#         receivers:
-#           - otlp
-#       metrics:
-#         exporters:
-#           - prometheus
-#         processors:
-#           - memory_limiter
-#           - batch
-#         receivers:
-#           - otlp
-#           - prometheus
-#       traces:
-#         exporters:
-#           - debug
-#           - otlp/jaeger
-#         processors:
-#           - memory_limiter
-#           - batch
-#         receivers:
-#           - otlp
-#           - jaeger
-#           - zipkin
-#     telemetry:
-#       metrics:
-#         address: ${env:MY_POD_IP}:8888
-
-# kind: ServiceAccount
-# apiVersion: v1
-# metadata:
-#   name: otel-dapr-collector
-#   labels:
-#     app.kubernetes.io/component: opentelemetry-collector
-#     app.kubernetes.io/instance: default.otel-dapr
-#     app.kubernetes.io/managed-by: opentelemetry-operator
-#     app.kubernetes.io/name: otel-dapr-collector
-#     app.kubernetes.io/part-of: opentelemetry
-#     app.kubernetes.io/version: latest
-# ---
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: otel-dapr
+  annotations:
+    dapr_collector_demo: "true"
 spec:
   config: |
     receivers:
@@ -111,6 +11,14 @@ spec:
         protocols:
           grpc:
           http:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: otel-collector
+              scrape_interval: 5s
+              static_configs:
+                - targets: [controller-dapr:9090, messages-dapr:9090, go-events-dapr:9090]
+
     processors:
       memory_limiter:
         check_interval: 1s
@@ -123,10 +31,16 @@ spec:
     exporters:
       # NOTE: Prior to v0.86.0 use `logging` instead of `debug`.
       debug:
+        verbosity: detailed
       otlp/jaeger:
         endpoint: simplest-collector:4317
         tls:
             insecure: true
+      prometheus:
+        enable_open_metrics: true
+        endpoint: 0.0.0.0:9464
+        resource_to_telemetry_conversion:
+          enabled: true
 
     service:
       pipelines:
@@ -135,9 +49,9 @@ spec:
           processors: [memory_limiter, batch]
           exporters: [debug, otlp/jaeger]
         metrics:
-          receivers: [otlp]
+          receivers: [otlp, prometheus]
           processors: [memory_limiter, batch]
-          exporters: [debug]
+          exporters: [debug, prometheus]
         logs:
           receivers: [otlp]
           processors: [memory_limiter, batch]
