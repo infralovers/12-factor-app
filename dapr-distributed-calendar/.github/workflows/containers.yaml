@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     strategy:
-      fail-fast: 
+      fail-fast: false
       matrix:
         container: 
           - go
