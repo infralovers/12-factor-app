@@ -1,7 +1,5 @@
 name: Infralovers Container Build
 
-# ref: github.com/infralovers/github/workflow-templates/container.yml
-
 on:
   push:
     branches: [ 'main' ]
