@@ -13,10 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: 
-          - go
-          - node
-          - python
+        container: [ go, node, python ]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
