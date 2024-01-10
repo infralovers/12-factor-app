@@ -3,8 +3,13 @@ name: Infralovers Container Build - dapr-distributed-calendar
 on:
   push:
     branches: [ 'main' ]
+    paths: [ 'dapr-distributed-calendar/**' ]
   pull_request:
     branches: [ 'main' ]
+    paths: [ 'dapr-distributed-calendar/**' ]
+
+env:
+  platforms: linux/amd64,linux/arm64
 
 jobs:
   build:
@@ -50,7 +55,7 @@ jobs:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       with:
-        platforms: 'arm64,amd64'
+        platforms: ${{ env.platforms }}
 
     - name: Cache Docker layers
       uses: actions/cache@v2
@@ -85,4 +90,4 @@ jobs:
           # file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' && needs.prebuild.outputs.version != '' }}
           tags: ${{ steps.prep.outputs.tags }}
-          platforms: 'arm64,amd64'
+          platforms: ${{ env.platforms }}
