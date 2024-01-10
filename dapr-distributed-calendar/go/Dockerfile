@@ -8,7 +8,6 @@ RUN CGO_ENABLED=0 go build -o app .
 
 # output container ...
 FROM debian:buster-slim
-WORKDIR /root/
-COPY --from=builder /src/app .
+COPY --from=builder /src/app /bin/app
 EXPOSE 6000
-CMD ["./app"]
+CMD ["/bin/app"]
