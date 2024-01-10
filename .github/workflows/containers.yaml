@@ -9,7 +9,7 @@ on:
     paths: [ 'dapr-distributed-calendar/**' ]
 
 env:
-  platforms: linux/amd64 
+  platforms: linux/amd64, linux/arm64
   
 jobs:
   build:
