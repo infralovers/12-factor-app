@@ -1,14 +1,16 @@
+import json
+import os
+
 import flask
 from flask import request, jsonify
 from flask_cors import CORS
-import json
-import sys
-import time
 
 from dapr.clients import DaprClient
 
 app = flask.Flask(__name__)
 CORS(app)
+
+dapr_port = os.getenv("DAPR_HTTP_PORT", 5000)
 
 # dapr calls this endpoint to register the subscriber configuration
 # an alternative way would to be declare this inside a config yaml file
@@ -25,4 +27,5 @@ def subscriber():
     print(request.json, flush=True)
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
-app.run()
+if __name__ == "__main__":
+    app.run(port=dapr_port)
