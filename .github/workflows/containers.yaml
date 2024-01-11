@@ -1,4 +1,4 @@
-name: Infralovers Container Build - dapr-distributed-calendar
+name: Containers - distributed-calendar
 
 on:
   push:
