@@ -68,11 +68,12 @@ I have tried to model this system on the Model View Controller Service (MVCS) ar
         }
     })
     ```
+
     where the invokeURL is defined as:
+
     ```js
     const invokeUrl = `http://localhost:${daprPort}/v1.0/invoke/${eventApp}/method`;
     ```
-  
   
   * On creation of a new event, it publishes a message to a **pubsub** topic which is then picked up by the **Python** subscriber. 
   
@@ -89,7 +90,9 @@ I have tried to model this system on the Model View Controller Service (MVCS) ar
       request( { uri: publishUrl, method: 'POST', json: JSON.stringify(message) } );
     }
     ```
+
     where the publish URL is:
+    
     ```js
     const publishUrl = `http://localhost:${daprPort}/v1.0/publish/${pubsub_name}/${topic}`;
     ```
