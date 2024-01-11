@@ -2,14 +2,22 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/mux"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
+	"go.opentelemetry.io/otel/metric"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	"go.opentelemetry.io/otel/sdk/resource"
+	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 )
 
 var daprPort = os.Getenv("DAPR_HTTP_PORT") // Dapr's default is 3500 if not configured
@@ -25,8 +33,46 @@ type Event struct {
 	ID   string
 }
 
+func newResource() (*resource.Resource, error) {
+	return resource.Merge(resource.Default(),
+		resource.NewWithAttributes(semconv.SchemaURL,
+			semconv.ServiceName("go-events"),
+			semconv.ServiceVersion("0.1.0"),
+		))
+}
+
+func newMeterProvider(res *resource.Resource) (*sdkmetric.MeterProvider, error) {
+	metricExporter, err := otlpmetricgrpc.New(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	meterProvider := sdkmetric.NewMeterProvider(
+		sdkmetric.WithResource(res),
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExporter,
+			// Default is 1m. Set to 3s for demonstrative purposes.
+			sdkmetric.WithInterval(3*time.Second))),
+	)
+	otel.SetMeterProvider(meterProvider)
+	return meterProvider, nil
+}
+
+var meter = otel.Meter("go-events")
+var eventsCounter metric.Int64UpDownCounter
+
+func init() {
+	var err error
+	eventsCounter, err = meter.Int64UpDownCounter(
+		"events.counter",
+		metric.WithDescription("Number of events."),
+		metric.WithUnit("{events}"),
+	)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func addEvent(w http.ResponseWriter, r *http.Request) {
-	log.Printf(stateURL)
 	var event Event
 
 	err := json.NewDecoder(r.Body).Decode(&event)
@@ -44,13 +90,14 @@ func addEvent(w http.ResponseWriter, r *http.Request) {
 		"value": event.Name + " " + event.Date,
 	}
 	state, _ := json.Marshal(data)
-	log.Printf(string(state))
+	log.Print(string(state))
 
 	resp, err := http.Post(stateURL, "application/json", bytes.NewBuffer(state))
 	if err != nil {
 		log.Fatalln("Error posting to state", err)
 		return
 	}
+	eventsCounter.Add(context.Background(), 1)
 	log.Printf("Response after posting to state: %s", resp.Status)
 	http.Error(w, "All Okay", http.StatusOK)
 }
@@ -62,12 +109,19 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	var eventID Identity
 
 	err := json.NewDecoder(r.Body).Decode(&eventID)
-	log.Printf("Error decoding id")
+	if err != nil {
+		log.Print("Error decoding id")
+		return
+	}
 
 	deleteURL := stateURL + "/" + eventID.ID
 	log.Printf("Delete URL: %s", deleteURL)
 
 	req, err := http.NewRequest(http.MethodDelete, deleteURL, nil)
+	if err != nil {
+		log.Fatalln("Error creating delete request", err)
+		return
+	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -78,8 +132,8 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 
 	defer resp.Body.Close()
 	bodyBytes, _ := io.ReadAll(resp.Body)
-
-	log.Printf(string(bodyBytes))
+	eventsCounter.Add(context.Background(), -1)
+	log.Print(string(bodyBytes))
 }
 
 func getEvent(w http.ResponseWriter, r *http.Request) {
@@ -114,10 +168,28 @@ func getEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf(string(bodyBytes))
+	log.Print(string(bodyBytes))
 }
 
 func main() {
+	res, err := newResource()
+	if err != nil {
+		panic(err)
+	}
+
+	meterProvider, err := newMeterProvider(res)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := meterProvider.Shutdown(context.Background()); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	otel.SetMeterProvider(meterProvider)
+
 	router := mux.NewRouter()
 
 	router.HandleFunc("/addEvent", addEvent).Methods("POST")
