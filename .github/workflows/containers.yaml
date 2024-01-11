@@ -32,8 +32,8 @@ jobs:
         if [[ -n "${{ secrets.IMAGE_REPO }}" ]]; then
           IMAGE_REPO="${{ secrets.IMAGE_REPO }}"
         fi
-        QUAY_IMAGE="quay.io/$IMAGE_REPO/$IMAGE_NAME/${{ matrix.container }}"
-        GHCR_IMAGE="ghcr.io/${{ github.repository }}/${{ matrix.container }}"
+        QUAY_IMAGE="quay.io/$IMAGE_REPO/$IMAGE_NAME-${{ matrix.container }}"
+        GHCR_IMAGE="ghcr.io/${{ github.repository }}-${{ matrix.container }}"
         VERSION="dev"
         if [[ '${{ needs.prebuild.outputs.version }}'  != '' ]]; then
           VERSION="${{ needs.prebuild.outputs.version }}"
