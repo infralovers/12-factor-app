@@ -2,7 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: controller
-  # namespace: 12-factor-app
+  namespace: 12-factor-app
   labels:
     app: controller
 spec:

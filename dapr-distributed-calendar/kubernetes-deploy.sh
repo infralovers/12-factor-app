@@ -74,5 +74,21 @@ helm install redis bitnami/redis --namespace 12-factor-app --wait
 # deploy the 12-factor-app
 kubectl apply -f kubernetes/.
 
+# setup locust for loadgeneration OPTIONAL
+kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
+helm repo add deliveryhero https://charts.deliveryhero.io/
+helm repo update
+helm install locust deliveryhero/locust \
+  --set loadtest.name=my-loadtest \
+  --set loadtest.locust_locustfile_configmap=my-loadtest-locustfile \
+  --set loadtest.locust_host=http://controller.12-factor-app:3000 \
+  --set master.environment.LOCUST_RUN_TIME=1m \
+  --set loadtest.environment.LOCUST_AUTOSTART="true" \
+  --namespace 12-factor-app \
+  --wait
+kubectl apply -f locust/ingress.yaml
+
 # get redis password (for manual interactions with the redis cli) OPTIONAL
-kubectl get secret redis -n 12-factor-app -o jsonpath='{.data.redis-password}' | base64 --decode
+redis_pwd=$(kubectl get secret redis -n 12-factor-app -o jsonpath='{.data.redis-password}' | base64 --decode)
+echo The redis password is $redis_pwd
+echo To authenticate use: redis-cli -a $redis_pwd
