@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: go-events
-  # namespace: 12-factor-app
+  namespace: 12-factor-app
   labels:
     app: go-events
 spec:
@@ -35,7 +35,7 @@ spec:
         - name: DAPR_HTTP_PORT
           value: "3500"
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: "http://otel-dapr-collector:4317"
+          value: "http://otel-dapr-collector.opentelemetry:4317"
         ports:
         - containerPort: 6000
         imagePullPolicy: Always

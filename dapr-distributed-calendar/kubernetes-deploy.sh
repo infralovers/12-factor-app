@@ -1,15 +1,17 @@
 #!/bin/sh
 
-# create namespace
-# kubectl create namespace 12-factor-app
+# create 12-factor-app namespace
+kubectl create namespace 12-factor-app
 
 # install OTel Operator
+kubectl create namespace opentelemetry
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm repo update
 helm install my-opentelemetry-operator open-telemetry/opentelemetry-operator \
   --set admissionWebhooks.certManager.enabled=false \
   --set admissionWebhooks.certManager.autoGenerateCert.enabled=true \
   --set manager.featureGates='operator.autoinstrumentation.go' \
+  --namespace opentelemetry \
   --wait
 
 # create OTel collector and instrumentation
@@ -37,7 +39,7 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack \
         --version 51.3.0 \
-        --namespace default \
+        --namespace observability \
         --values prometheus/kube-prometheus-stack-values.yaml \
         --wait
 kubectl apply -f ./prometheus/ingress.yaml
@@ -67,10 +69,10 @@ helm install dapr-dashboard dapr/dapr-dashboard --namespace dapr-system --wait
 # install redis
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
-helm install redis bitnami/redis --wait
+helm install redis bitnami/redis --namespace 12-factor-app --wait
 
 # deploy the 12-factor-app
 kubectl apply -f kubernetes/.
 
 # get redis password (for manual interactions with the redis cli) OPTIONAL
-kubectl get secret redis -o jsonpath='{.data.redis-password}' | base64 --decode
+kubectl get secret redis -n 12-factor-app -o jsonpath='{.data.redis-password}' | base64 --decode

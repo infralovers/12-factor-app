@@ -115,7 +115,6 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	deleteURL := stateURL + "/" + eventID.ID
-	log.Printf("Delete URL: %s", deleteURL)
 
 	req, err := http.NewRequest(http.MethodDelete, deleteURL, nil)
 	if err != nil {
