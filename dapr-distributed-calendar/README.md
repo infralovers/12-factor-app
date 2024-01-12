@@ -104,7 +104,7 @@ a different language. I'll detail the implementation below.
 
 * **Event Service** (written in Go):
   This service uses the statestore component Redis for storing and deleting events from memory. The code snippet shown below is from 
-  `go_events.go` and demonstrates adding an event to the state store. 
+  `go_events.go` and demonstrates adding an event to the state store.
 
   ```go
    var data = make([]map[string]string, 1)
