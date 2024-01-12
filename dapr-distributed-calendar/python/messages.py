@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 from dapr.clients import DaprClient
 
-from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+from opentelemetry.sdk.resources import SERVICE_NAME, SERVICE_VERSION, Resource
 
 from opentelemetry import metrics
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
@@ -16,7 +16,8 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 # Service name is required for most backends
 resource = Resource(attributes={
-    SERVICE_NAME: "your-service-name"
+    SERVICE_NAME: "messages",
+    SERVICE_VERSION: '0.1.0'
 })
 
 reader = PeriodicExportingMetricReader(
