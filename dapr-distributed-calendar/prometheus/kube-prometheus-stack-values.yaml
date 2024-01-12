@@ -12,7 +12,7 @@ prometheus:
           - role: pod
             namespaces:
               own_namespace: true
-              # names: [12-factor-app]
+              names: [opentelemetry]
         relabel_configs:
           - source_labels: [__meta_kubernetes_pod_annotation_dapr_collector_demo]
             action: keep

@@ -2,12 +2,12 @@ apiVersion: dapr.io/v1alpha1
 kind: Configuration
 metadata:
   name: appconfig
-  # namespace: 12-factor-app
+  namespace: 12-factor-app
 spec:
   tracing:
     samplingRate: "1"
     stdout: true
     otel:
-      endpointAddress: otel-dapr-collector:4317
+      endpointAddress: otel-dapr-collector.opentelemetry:4317
       isSecure: false
       protocol: grpc

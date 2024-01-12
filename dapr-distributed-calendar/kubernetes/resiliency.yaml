@@ -2,7 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Resiliency
 metadata:
   name: myresiliency
-  # namespace: 12-factor-app
+  namespace: 12-factor-app
 # similar to subscription and configuration specs, scopes lists the Dapr App IDs that this
 # resiliency spec can be used by.
 scopes:

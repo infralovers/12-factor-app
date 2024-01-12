@@ -2,7 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: events
-  # namespace: 12-factor-app
+  namespace: 12-factor-app
 spec:
   type: state.redis
   version: v1
@@ -21,7 +21,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: pubsub
-  # namespace: 12-factor-app
+  namespace: 12-factor-app
 spec:
   type: pubsub.redis
   version: v1

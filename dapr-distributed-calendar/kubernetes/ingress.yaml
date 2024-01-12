@@ -2,7 +2,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: controller-ingress
-  # namespace: 12-factor-app
+  namespace: 12-factor-app
 spec:
   entryPoints:
     - web
