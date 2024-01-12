@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: locust-ingress
+  namespace: 12-factor-app
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`locust.<ENV-NAME>-<ENV-USER-ID>-01.<ENV-ANIMAL>.<ENV-DOMAIN>`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: locust
+          port: 8089
