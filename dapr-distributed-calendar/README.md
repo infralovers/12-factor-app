@@ -92,7 +92,7 @@ I have tried to model this system on the Model View Controller Service (MVCS) ar
     ```
 
     where the publish URL is:
-    
+
     ```js
     const publishUrl = `http://localhost:${daprPort}/v1.0/publish/${pubsub_name}/${topic}`;
     ```
@@ -204,6 +204,7 @@ After the components are created with the correct fields, we can build and run t
 ```
 go get -u github.com/gorilla/mux
 ```
+
 2) Build the app.
 
 ```
