@@ -68,11 +68,12 @@ I have tried to model this system on the Model View Controller Service (MVCS) ar
         }
     })
     ```
+
     where the invokeURL is defined as:
+
     ```js
     const invokeUrl = `http://localhost:${daprPort}/v1.0/invoke/${eventApp}/method`;
     ```
-  
   
   * On creation of a new event, it publishes a message to a **pubsub** topic which is then picked up by the **Python** subscriber. 
   
@@ -203,6 +204,7 @@ After the components are created with the correct fields, we can build and run t
 ```
 go get -u github.com/gorilla/mux
 ```
+
 2) Build the app.
 
 ```
