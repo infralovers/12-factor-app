@@ -89,7 +89,9 @@ I have tried to model this system on the Model View Controller Service (MVCS) ar
       request( { uri: publishUrl, method: 'POST', json: JSON.stringify(message) } );
     }
     ```
+
     where the publish URL is:
+
     ```js
     const publishUrl = `http://localhost:${daprPort}/v1.0/publish/${pubsub_name}/${topic}`;
     ```
