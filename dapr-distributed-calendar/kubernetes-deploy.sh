@@ -1,20 +1,5 @@
 #!/bin/sh
 
-# # Replace 
-# find kubernetes* -type f -exec sed -i -e "s//$USER_ID/g" {} \;
-
-# # Replace 
-# find kubernetes* -type f -exec sed -i -e "s//$ANIMAL/g" {} \;
-
-# # Replace 
-# find kubernetes* -type f -exec sed -i -e "s//$HOST_IP/g" {} \;
-
-# # Replace 
-# find kubernetes* -type f -exec sed -i -e "s//$ENVIRONMENT/g" {} \;
-
-# # Replace 
-# find kubernetes* -type f -exec sed -i -e "s//$DOMAIN/g" {} \;
-
 # create namespace
 # kubectl create namespace 12-factor-app
 
@@ -45,7 +30,7 @@ helm upgrade --install \
 kubectl create namespace observability
 kubectl create -f https://github.com/jaegertracing/jaeger-operator/releases/download/v1.38.0/jaeger-operator.yaml -n observability
 kubectl wait --for=condition=ready pod --all --timeout=200s -n observability
-kubectl apply -f jaeger/simplest.yaml
+kubectl apply -f jaeger/.
 
 # install prometheus OPTIONAL
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -55,6 +40,7 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
         --namespace default \
         --values prometheus/kube-prometheus-stack-values.yaml \
         --wait
+kubectl apply -f ./prometheus/ingress.yaml
 
 # install elastic (requires namespace 'observability') OPTIONAL
 helm repo add elastic https://helm.elastic.co
@@ -64,6 +50,7 @@ helm install kibana elastic/kibana --version 7.17.3 -n observability --wait
 kubectl apply -f ./fluent/fluentd-config-map.yaml
 kubectl apply -f ./fluent/fluentd-dapr-with-rbac.yaml
 kubectl wait --for=condition=ready pod --all --timeout=200s -n observability
+kubectl apply -f ./fluent/ingress.yaml
 
 # install dapr
 helm repo add dapr https://dapr.github.io/helm-charts/
