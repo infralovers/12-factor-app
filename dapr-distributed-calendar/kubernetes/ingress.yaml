@@ -1,14 +1,14 @@
-# apiVersion: traefik.containo.us/v1alpha1
-# kind: IngressRoute
-# metadata:
-#   name: controller-ingress
-#   namespace: 12-factor-app
-# spec:
-#   entryPoints:
-#     - web
-#   routes:
-#     - match: Host(`controller.<ENV-NAME>-<ENV-USER-ID>-01.<ENV-ANIMAL>.<ENV-DOMAIN>`) && PathPrefix(`/`)
-#       kind: Rule
-#       services:
-#         - name: controller
-#           port: 80
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: controller-ingress
+  # namespace: 12-factor-app
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`controller.<ENV-NAME>-<ENV-USER-ID>-01.<ENV-ANIMAL>.<ENV-DOMAIN>`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: controller
+          port: 3000
