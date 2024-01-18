@@ -25,6 +25,7 @@ const myMeter = opentelemetry.metrics.getMeter('controller');
 const newEventCounter = myMeter.createCounter('newEvents.counter');
 const getEventCounter = myMeter.createCounter('getEvents.counter');
 const deleteEventCounter = myMeter.createCounter('deleteEvents.counter');
+const updateEventCounter = myMeter.createCounter('updateEvents.counter');
 // app.get('/dapr/subscribe', (_req, res) => {
 //     res.json([
 //         {
@@ -80,13 +81,23 @@ app.post('/newevent', (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then((response) => {
+    }).then(async (response) => {
+        // Only post if event does not already exist
+        const responseBodyString = await streamToString(response.body);
+
+        // Check if response body contains "Event already exists"
+        if (responseBodyString.includes("Event already exists")) {
+            console.log("Event already exists.");
+            res.status(404).send({ message: "Event already exists." });
+            return;
+        }
+        
         if (!response.ok) {
             throw "Failed to persist state.";
         }
 
         console.log("Successfully persisted state.");
-        res.status(200).send();
+        res.status(200).send();        
     }).catch((error) => {
         console.log(error);
         res.status(500).send({message: error});
@@ -107,9 +118,18 @@ app.delete('/event/:id', (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then((response) => {
-        if (!response.ok) {n
+    }).then(async (response) => {
+        if (!response.ok) {
             throw "Failed to delete state.";
+        }
+        // Only delete if event does exist
+        const responseBodyString = await streamToString(response.body);
+
+        // Check if response body contains "Event does not exists"
+        if (responseBodyString.includes("Event does not exists")) {
+            console.log("Event does not exists.");
+            res.status(404).send({ message: "Event does not exists." });
+            return;
         }
 
         console.log("Successfully deleted state.");
@@ -142,6 +162,13 @@ app.get('/event/:id', (req, res) =>{
         console.log("Successfully got state.");
         const responseBodyString = await streamToString(response.body);
 
+        // Check if response body is empty
+        if (responseBodyString.trim() === "") {
+            console.log("No event found.");
+            res.status(404).send({ message: "No event found." });
+            return;
+        }
+
         try {
             const responseBody = JSON.parse(responseBodyString);
             res.status(200).json(responseBody);
@@ -154,5 +181,34 @@ app.get('/event/:id', (req, res) =>{
         res.status(500).send({message: error});
     });
 })
+
+// app.put('/updateevent/:id', (req, res) => {
+//     updateEventCounter.add(1);
+
+//     const data = req.body.data;
+//     const eventId = data.id;
+//     console.log("Updating event! Event ID: " + eventId);
+
+//     console.log("Data passed as body to Go", JSON.stringify(data))
+
+//     // Assuming your Go service has an endpoint like '/updateEvent/{eventId}'
+//     fetch(invokeUrl + `/updateEvent/${eventId}`, {
+//         method: "PUT", // Use PUT method for updating
+//         body: JSON.stringify(data),
+//         headers: {
+//             "Content-Type": "application/json"
+//         }
+//     }).then(async (response) => {
+//         if (!response.ok) {
+//             throw "Failed to update event.";
+//         }
+
+//         console.log("Successfully updated event.");
+//         res.status(200).send();
+//     }).catch((error) => {
+//         console.log(error);
+//         res.status(500).send({ message: error });
+//     });
+// });
 
 app.listen(port, () => console.log(`Node App listening on port ${port}!`));

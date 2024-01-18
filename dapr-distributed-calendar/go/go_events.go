@@ -91,8 +91,36 @@ func addEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	state, _ := json.Marshal(data)
 	log.Print(string(state))
+	id := data[0]["key"]
 
-	resp, err := http.Post(stateURL, "application/json", bytes.NewBuffer(state))
+	// Check if event with given ID already exists
+	req, err := http.NewRequest(http.MethodGet, stateURL+"/"+id, nil)
+	if err != nil {
+		log.Fatalln("Error creating get request", err)
+		return
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalln("Error getting event", err)
+		return
+	}
+
+	defer resp.Body.Close()
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return
+	}
+
+	if string(bodyBytes) != "" {
+		log.Printf("Event with ID %s already exists", id)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte("Event already exists"))
+		return
+	}
+
+	resp, err = http.Post(stateURL, "application/json", bytes.NewBuffer(state))
 	if err != nil {
 		log.Fatalln("Error posting to state", err)
 		return
@@ -116,13 +144,39 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 
 	deleteURL := stateURL + "/" + eventID.ID
 
-	req, err := http.NewRequest(http.MethodDelete, deleteURL, nil)
+	// Check if event with given ID exists before delete
+	req, err := http.NewRequest(http.MethodGet, deleteURL, nil)
 	if err != nil {
-		log.Fatalln("Error creating delete request", err)
+		log.Fatalln("Error creating get request", err)
 		return
 	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalln("Error getting event", err)
+		return
+	}
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return
+	}
+
+	if string(bodyBytes) == "" {
+		log.Printf("Event with ID %s does not exist exists", eventID.ID)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte("Event does not exists"))
+		return
+	}
+
+	req, err = http.NewRequest(http.MethodDelete, deleteURL, nil)
+	if err != nil {
+		log.Fatalln("Error creating delete request", err)
+		return
+	}
+	client = &http.Client{}
+	resp, err = client.Do(req)
 	if err != nil {
 		log.Fatalln("Error deleting event", err)
 		return
@@ -130,9 +184,7 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Response after delete call: %s", resp.Status)
 
 	defer resp.Body.Close()
-	bodyBytes, _ := io.ReadAll(resp.Body)
 	eventsCounter.Add(context.Background(), -1)
-	log.Print(string(bodyBytes))
 }
 
 func getEvent(w http.ResponseWriter, r *http.Request) {
