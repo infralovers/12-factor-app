@@ -166,6 +166,8 @@ func getEvent(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error reading response body: %v", err)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(bodyBytes)
 
 	log.Print(string(bodyBytes))
 }

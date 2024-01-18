@@ -120,6 +120,8 @@ app.delete('/event/:id', (req, res) => {
     });    
 });
 
+const streamToString = require('stream-to-string');
+
 app.get('/event/:id', (req, res) =>{
     getEventCounter.add(1);
     const key = req.params.id;      
@@ -133,12 +135,20 @@ app.get('/event/:id', (req, res) =>{
         headers: {
             "Content-Type": "application/json"
         }
-    }).then((response) => {
+    }).then(async (response) => {
         if (!response.ok) {
             throw "Failed to get state.";
         }
         console.log("Successfully got state.");
-        res.status(200).send();
+        const responseBodyString = await streamToString(response.body);
+
+        try {
+            const responseBody = JSON.parse(responseBodyString);
+            res.status(200).json(responseBody);
+        } catch (error) {
+            console.log("Error parsing JSON:", error);
+            res.status(500).send({ message: "Error parsing JSON" });
+        }
     }).catch((error) => {
         console.log(error);
         res.status(500).send({message: error});
