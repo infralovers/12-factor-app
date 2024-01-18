@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 require('isomorphic-fetch');
 
 const app = express();
-// const { HTTP } = require("cloudevents");
+
 app.use(bodyParser.json());
 
 const daprPort = process.env.DAPR_HTTP_PORT || 3500;
@@ -22,25 +22,10 @@ const opentelemetry = require('@opentelemetry/api');
 
 const myMeter = opentelemetry.metrics.getMeter('controller');
 
-const newEventCounter = myMeter.createCounter('newEvents.counter');
-const getEventCounter = myMeter.createCounter('getEvents.counter');
-const deleteEventCounter = myMeter.createCounter('deleteEvents.counter');
-const updateEventCounter = myMeter.createCounter('updateEvents.counter');
-// app.get('/dapr/subscribe', (_req, res) => {
-//     res.json([
-//         {
-//             pubsubname: "pubsub",
-//             topic: "events-topic",
-//             route: "getmsg"
-//         }
-//     ]);
-// });
-
-// app.post('/getmsg', (req, res) => {
-//     const receivedEvent = HTTP.toEvent({ headers: req.headers, body: req.body });
-//     console.log(receivedEvent);
-//     res.sendStatus(200);
-//   });
+const newEventCounter = myMeter.createCounter('newEvents-call.counter');
+const getEventCounter = myMeter.createCounter('getEvents-call.counter');
+const deleteEventCounter = myMeter.createCounter('deleteEvents-call.counter');
+const updateEventCounter = myMeter.createCounter('updateEvents-call.counter');
 
 function send_notif(data) {
     var message = {
@@ -182,33 +167,42 @@ app.get('/event/:id', (req, res) =>{
     });
 })
 
-// app.put('/updateevent/:id', (req, res) => {
-//     updateEventCounter.add(1);
+app.put('/updateevent', (req, res) => {
+    updateEventCounter.add(1);
 
-//     const data = req.body.data;
-//     const eventId = data.id;
-//     console.log("Updating event! Event ID: " + eventId);
+    const data = req.body.data;
+    const eventId = data.id;
+    console.log("Updating event! Event ID: " + eventId);
 
-//     console.log("Data passed as body to Go", JSON.stringify(data))
+    console.log("Data passed as body to Go", JSON.stringify(data))
 
-//     // Assuming your Go service has an endpoint like '/updateEvent/{eventId}'
-//     fetch(invokeUrl + `/updateEvent/${eventId}`, {
-//         method: "PUT", // Use PUT method for updating
-//         body: JSON.stringify(data),
-//         headers: {
-//             "Content-Type": "application/json"
-//         }
-//     }).then(async (response) => {
-//         if (!response.ok) {
-//             throw "Failed to update event.";
-//         }
+    // Assuming your Go service has an endpoint like '/updateEvent'
+    fetch(invokeUrl + `/updateEvent`, {
+        method: "PUT", // Use PUT method for updating
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then(async (response) => {
+        const responseBodyString = await streamToString(response.body);
 
-//         console.log("Successfully updated event.");
-//         res.status(200).send();
-//     }).catch((error) => {
-//         console.log(error);
-//         res.status(500).send({ message: error });
-//     });
-// });
+        // Check if response body contains "Event does not exists"
+        if (responseBodyString.includes("Event does not exists")) {
+            console.log("Event does not exists.");
+            res.status(404).send({ message: "Event does not exists." });
+            return;
+        }
+        
+        if (!response.ok) {
+            throw "Failed to update event.";
+        }
+
+        console.log("Successfully updated event.");
+        res.status(200).send();
+    }).catch((error) => {
+        console.log(error);
+        res.status(500).send({ message: error });
+    });
+});
 
 app.listen(port, () => console.log(`Node App listening on port ${port}!`));
