@@ -73,6 +73,7 @@ helm install redis bitnami/redis --namespace 12-factor-app --wait
 
 # deploy the 12-factor-app
 kubectl apply -f kubernetes/.
+kubectl wait --for=condition=ready pod --all --timeout=200s -n 12-factor-app
 
 # setup locust for loadgeneration OPTIONAL
 kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app

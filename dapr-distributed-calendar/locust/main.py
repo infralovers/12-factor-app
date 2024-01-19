@@ -3,7 +3,7 @@ from locust import HttpUser, task, between
 default_headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'}
 
 class EventsUser(HttpUser):
-    wait_time = between(5, 10)  # Adjust the wait time between tasks as needed
+    wait_time = between(3, 5)  # Adjust the wait time between tasks as needed
     
     @task
     def event_lifecycle(self):
@@ -22,7 +22,7 @@ class EventsUser(HttpUser):
             }
 
             # Send the POST request to create an event
-            response = self.client.post('/newevent', json=data, headers=headers)
+            response = self.client.post(f'/newevent', json=data, headers=headers)
 
             # Check if the request was successful
             if response.status_code == 200:
@@ -31,16 +31,32 @@ class EventsUser(HttpUser):
                 print(f"Failed to create event {event_id}. Status code: {response.status_code}")
             
             # Get the event
-            response = self.client.get('/event/{event_id}')
+            response = self.client.get(f'/event/{event_id}')
 
             # Check if the request was successful
             if response.status_code == 200:
                 print(f"Event {event_id} retrieved successfully")
             else:
                 print(f"Failed to retrieve event {event_id}. Status code: {response.status_code}")
+
+            # Update the event
+            updated_data = {
+                "data": {
+                    "name": f"Updated Event {event_id}",
+                    "date": "2020-10-10",
+                    "id": str(event_id)
+                }
+            }
+            response = self.client.put(f'/updateevent', json=updated_data, headers=headers)
             
+            # Check if the update was successful
+            if response.status_code == 200:
+                print(f"Event {event_id} updated successfully")
+            else:
+                print(f"Failed to update event {event_id}. Status code: {response.status_code}")
+
             # Delete the event
-            response = self.client.delete('/event/{event_id}')
+            response = self.client.delete(f'/event/{event_id}')
 
             # Check if the request was successful
             if response.status_code == 200:
