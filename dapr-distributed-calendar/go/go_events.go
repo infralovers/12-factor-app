@@ -103,7 +103,7 @@ func addEvent(w http.ResponseWriter, r *http.Request) {
 	if string(bodyBytes) != "" {
 		log.Printf("Event with ID %s already exists", id)
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte("Event already exists"))
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -141,7 +141,7 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	if string(bodyBytes) == "" {
 		log.Printf("Event with ID %s does not exist exists", eventID.ID)
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte("Event does not exists"))
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -157,7 +157,7 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("Response after delete call: %s", resp.Status)
-
+	w.WriteHeader(http.StatusNoContent)
 	defer resp.Body.Close()
 	eventsCounter.Add(context.Background(), -1)
 }
@@ -230,7 +230,7 @@ func updateEvent(w http.ResponseWriter, r *http.Request) {
 	if string(bodyBytes) == "" {
 		log.Printf("Event with ID %s does not exists", id)
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte("Event does not exists"))
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
