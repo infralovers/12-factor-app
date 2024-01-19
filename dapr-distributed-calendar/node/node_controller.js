@@ -1,6 +1,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const streamToString = require('stream-to-string');
 require('isomorphic-fetch');
 
 const app = express();
@@ -66,26 +67,15 @@ app.post('/newevent', (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then(async (response) => {
-        // Only post if event does not already exist
-        const responseBodyString = await streamToString(response.body);
-
-        // Check if response body contains "Event already exists"
-        if (responseBodyString.includes("Event already exists")) {
-            console.log("Event already exists.");
-            res.status(404).send({ message: "Event already exists." });
-            return;
-        }
-        
+    }).then((response) => {
         if (!response.ok) {
             throw "Failed to persist state.";
         }
 
         console.log("Successfully persisted state.");
-        res.status(200).send();        
-    }).catch((error) => {
-        console.log(error);
-        res.status(500).send({message: error});
+        res.status(200).send({ message: "Event created" });        
+    }).catch(() => {
+        res.status(405).send({message: "Event already exists"});
     });
     send_notif(data)
 });
@@ -103,29 +93,17 @@ app.delete('/event/:id', (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then(async (response) => {
-        if (!response.ok) {
-            throw "Failed to delete state.";
+    }).then((response) => {
+        console.log("My status: "+ response.status)
+        if (response.status != 204) {
+            throw "Failed to delete state.";   
         }
-        // Only delete if event does exist
-        const responseBodyString = await streamToString(response.body);
-
-        // Check if response body contains "Event does not exists"
-        if (responseBodyString.includes("Event does not exists")) {
-            console.log("Event does not exists.");
-            res.status(404).send({ message: "Event does not exists." });
-            return;
-        }
-
-        console.log("Successfully deleted state.");
-        res.status(200).send();
-    }).catch((error) => {
-        console.log(error);
-        res.status(500).send({message: error});
-    });    
+        console.log("Successfully deleted event.");
+        res.status(204).send();
+    }).catch(() => {
+        res.status(404).send({ message: "Event not found" });
+    }); 
 });
-
-const streamToString = require('stream-to-string');
 
 app.get('/event/:id', (req, res) =>{
     getEventCounter.add(1);
@@ -149,8 +127,8 @@ app.get('/event/:id', (req, res) =>{
 
         // Check if response body is empty
         if (responseBodyString.trim() === "") {
-            console.log("No event found.");
-            res.status(404).send({ message: "No event found." });
+            console.log("Event not found");
+            res.status(404).send({ message: "Event not found" });
             return;
         }
 
@@ -183,25 +161,15 @@ app.put('/updateevent', (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then(async (response) => {
-        const responseBodyString = await streamToString(response.body);
-
-        // Check if response body contains "Event does not exists"
-        if (responseBodyString.includes("Event does not exists")) {
-            console.log("Event does not exists.");
-            res.status(404).send({ message: "Event does not exists." });
-            return;
-        }
-        
+    }).then((response) => {
         if (!response.ok) {
             throw "Failed to update event.";
         }
-
+        
         console.log("Successfully updated event.");
-        res.status(200).send();
-    }).catch((error) => {
-        console.log(error);
-        res.status(500).send({ message: error });
+        res.status(200).send({ message: "Event updated" });
+    }).catch(() => {
+        res.status(404).send({ message: "Event not found" });
     });
 });
 
