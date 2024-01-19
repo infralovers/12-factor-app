@@ -145,19 +145,25 @@ app.get('/event/:id', (req, res) =>{
     });
 })
 
-app.put('/updateevent', (req, res) => {
+app.put('/updateevent/:id', (req, res) => {
     updateEventCounter.add(1);
 
     const data = req.body.data;
-    const eventId = data.id;
-    console.log("Updating event! Event ID: " + eventId);
+    const key = req.params.id; 
+    const body = {
+            "name": data.name,
+            "date": data.date,
+            "id": key
+    }
+    
+    console.log("Updating event! Event ID: " + key);
 
-    console.log("Data passed as body to Go", JSON.stringify(data))
+    console.log("Data passed as body to Go", JSON.stringify(body))
 
     // Assuming your Go service has an endpoint like '/updateEvent'
     fetch(invokeUrl + `/updateEvent`, {
         method: "PUT", // Use PUT method for updating
-        body: JSON.stringify(data),
+        body: JSON.stringify(body),
         headers: {
             "Content-Type": "application/json"
         }

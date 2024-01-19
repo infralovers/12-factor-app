@@ -43,11 +43,10 @@ class EventsUser(HttpUser):
             updated_data = {
                 "data": {
                     "name": f"Updated Event {event_id}",
-                    "date": "2020-10-10",
-                    "id": str(event_id)
+                    "date": "2020-10-10"
                 }
             }
-            response = self.client.put(f'/updateevent', json=updated_data, headers=headers)
+            response = self.client.put(f'/updateevent/{event_id}', json=updated_data, headers=headers)
             
             # Check if the update was successful
             if response.status_code == 200:
