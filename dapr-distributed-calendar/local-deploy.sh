@@ -39,6 +39,14 @@ cd ~/12-factor-app/dapr-distributed-calendar/go
 go build go_events.go
 
 # Prepare Python environment
+if command -v python3 &>/dev/null; then
+    echo "Python 3 is installed on this machine."
+else
+    echo "Python 3 is not installed. Installing..."
+    sudo apt update
+    sudo apt install python3
+    python3 --version
+fi
 # Check if python3.11 is available in the PATH
 if command -v python3.11 &>/dev/null; then
     echo "Python 3.11 is installed on this machine."
