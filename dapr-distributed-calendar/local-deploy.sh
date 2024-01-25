@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Prepare Dapr environment
+cd $HOME
 mkdir $HOME/.dapr
 cp -r ~/12-factor-app/dapr-distributed-calendar/local/components ~/.dapr
 
