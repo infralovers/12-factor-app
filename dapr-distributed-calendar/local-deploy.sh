@@ -1,15 +1,13 @@
 #!/bin/sh
 
-# # Prepare Dapr environment
-cd
-git clone https://github.com/infralovers/12-factor-app.git
+# Prepare Dapr environment
 mkdir $HOME/.dapr
 cp -r ~/12-factor-app/dapr-distributed-calendar/local/components ~/.dapr
 
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
 dapr init # to initialize dapr
 
-# # Prepare Golang environment
+# Prepare Golang environment
 git clone https://github.com/udhos/update-golang
 cd update-golang
 sudo ./update-golang.sh
@@ -19,7 +17,7 @@ source /etc/profile.d/golang_path.sh
 cd ~/12-factor-app/dapr-distributed-calendar/go
 go build go_events.go
 
-# # Prepare Python environment
+# Prepare Python environment
 # Check if python3.11 is available in the PATH
 if command -v python3.11 &>/dev/null; then
     echo "Python 3.11 is installed on this machine."
