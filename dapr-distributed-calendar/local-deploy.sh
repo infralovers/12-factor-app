@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Check if Docker is installed
 if command -v docker &>/dev/null; then
@@ -34,7 +34,7 @@ dapr init # to initialize dapr
 git clone https://github.com/udhos/update-golang
 cd update-golang
 sudo ./update-golang.sh
-. /etc/profile.d/golang_path.sh
+source /etc/profile.d/golang_path.sh
 
 # Build Golang application
 cd ~/12-factor-app/dapr-distributed-calendar/go
@@ -45,7 +45,7 @@ go build go_events.go
 if command -v python3.11 &>/dev/null; then
     echo "Python 3.11 is installed on this machine."
 else
-    echo "Python 3.11 is not found on this machine."
+    echo "Python 3.11 is not installed. Installing..."
     sudo apt update
     sudo apt install python3.11
     sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
