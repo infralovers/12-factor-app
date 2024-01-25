@@ -15,9 +15,8 @@ else
 
     # Add User to docker Group
     sudo usermod -aG docker $USER
+    echo "Docker has been installed. Rerun the script to continue!"
     newgrp docker
-
-    echo "Docker has been installed."
 fi
 
 # Prepare Dapr environment
