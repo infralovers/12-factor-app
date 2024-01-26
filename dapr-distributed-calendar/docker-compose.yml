@@ -14,6 +14,8 @@ services:
       - placement
     networks:
       - dapr-callendar-network
+    environment:
+      - EVENT_APP=go-events
   controller-dapr:
     image: "daprio/daprd:edge"
     command: ["./daprd",

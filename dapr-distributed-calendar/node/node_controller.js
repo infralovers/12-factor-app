@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 const daprPort = process.env.DAPR_HTTP_PORT || 3500;
 
-const eventApp = `go-events`;
+const eventApp = process.env.EVENT_APP || `go-events`;
 const invokeUrl = `http://localhost:${daprPort}/v1.0/invoke/${eventApp}/method`;
 
 const topic = 'events-topic'
