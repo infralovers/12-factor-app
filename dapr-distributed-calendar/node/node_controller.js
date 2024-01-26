@@ -1,7 +1,6 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const streamToString = require('stream-to-string');
 require('isomorphic-fetch');
 
 const app = express();
@@ -123,22 +122,40 @@ app.get('/event/:id', (req, res) =>{
             throw "Failed to get state.";
         }
         console.log("Successfully got state.");
-        const responseBodyString = await streamToString(response.body);
+        try{
+            const reader = response.body.getReader();
+            let responseBody = '';
 
-        // Check if response body is empty
-        if (responseBodyString.trim() === "") {
-            console.log("Event not found");
-            res.status(404).send({ message: "Event not found" });
-            return;
-        }
+            // The following function handles each data chunk
+            function push() {
+                return reader.read().then(({ done, value }) => {
+                    // Is there no more data to read?
+                    if (done) {
+                        // Tell the browser that we have finished sending data
+                        reader.releaseLock();
+                        return;
+                    }
 
-        try {
-            const responseBody = JSON.parse(responseBodyString);
-            res.status(200).json(responseBody);
+                    // Get the data and append it to the responseBody
+                    responseBody += new TextDecoder().decode(value);
+                    push();
+                });
+            }
+
+            await push();
+
+            // Check if response body is empty or not valid JSON
+            if (!responseBody || Object.keys(responseBody).length === 0) {
+                console.log("Event not found");
+                res.status(404).send({ message: "Event not found" });
+                return;
+            }
+            const parsedResponseBody = JSON.parse(responseBody);
+            res.status(200).json(parsedResponseBody);
         } catch (error) {
             console.log("Error parsing JSON:", error);
             res.status(500).send({ message: "Error parsing JSON" });
-        }
+        }        
     }).catch((error) => {
         console.log(error);
         res.status(500).send({message: error});
