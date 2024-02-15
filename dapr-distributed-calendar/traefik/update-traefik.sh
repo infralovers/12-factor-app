@@ -11,4 +11,3 @@ helm uninstall traefik --namespace kube-system
 
 # Reinstall Traefik
 helm install traefik traefik/traefik --namespace kube-system --values traefik-values.yaml --wait
-
