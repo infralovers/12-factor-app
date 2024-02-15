@@ -20,7 +20,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 )
 
-var daprPort = os.Getenv("DAPR_HTTP_PORT") // Dapr's default is 3500 if not configured
+var daprPort = os.Getenv("DAPR_HTTP_PORT")
 
 const stateStoreName = `events`
 
@@ -270,6 +270,9 @@ func checkEvent(id string) ([]byte, error) {
 }
 
 func main() {
+	if daprPort == "" {
+		daprPort = "3500"
+	}
 	res, err := newResource()
 	if err != nil {
 		panic(err)

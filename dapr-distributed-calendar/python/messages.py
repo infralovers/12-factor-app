@@ -35,7 +35,7 @@ subscription_counter = meter.create_counter(
 app = flask.Flask(__name__)
 CORS(app)
 
-dapr_port = os.getenv("FLASK_RUN_PORT", 5000)
+flask_port = os.getenv("FLASK_RUN_PORT", 5000)
 
 # dapr calls this endpoint to register the subscriber configuration
 # an alternative way would to be declare this inside a config yaml file
@@ -54,4 +54,4 @@ def subscriber():
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 if __name__ == "__main__":
-    app.run(port=dapr_port)
+    app.run(port=flask_port)
