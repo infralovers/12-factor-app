@@ -30,8 +30,11 @@ helm upgrade --install \
 
 # install jaeger (requires cert-manager) OPTIONAL
 kubectl create namespace observability
-kubectl create -f https://github.com/jaegertracing/jaeger-operator/releases/download/v1.38.0/jaeger-operator.yaml -n observability
-kubectl wait --for=condition=ready pod --all --timeout=200s -n observability
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm repo update
+helm install jaeger jaegertracing/jaeger-operator -n observability --wait
+# kubectl create -f https://github.com/jaegertracing/jaeger-operator/releases/download/v1.38.0/jaeger-operator.yaml -n observability
+# kubectl wait --for=condition=ready pod --all --timeout=200s -n observability
 kubectl apply -f jaeger/.
 
 # install prometheus OPTIONAL

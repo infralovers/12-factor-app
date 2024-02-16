@@ -4,7 +4,7 @@ logs:
   access:
     enabled: true
 metrics:
-  prometheus: null
+  # prometheus: null
   openTelemetry:
     ## Address of the OpenTelemetry Collector to send metrics to.
     address: "otel-dapr-collector.opentelemetry:4317"

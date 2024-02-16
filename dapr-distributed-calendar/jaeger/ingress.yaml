@@ -10,5 +10,5 @@ spec:
     - match: Host(`jaeger.<ENV-NAME>-<ENV-USER-ID>-01.<ENV-ANIMAL>.<ENV-DOMAIN>`) && PathPrefix(`/`)
       kind: Rule
       services:
-        - name: simplest-query
+        - name: jaeger-query
           port: 16686
