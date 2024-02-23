@@ -78,7 +78,7 @@ helm install redis bitnami/redis --namespace 12-factor-app --wait
 kubectl apply -f kubernetes/.
 kubectl wait --for=condition=ready pod --all --timeout=200s -n 12-factor-app
 
-# setup locust for loadgeneration OPTIONAL
+# setup locust for load generation OPTIONAL
 kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
 helm repo add deliveryhero https://charts.deliveryhero.io/
 helm repo update

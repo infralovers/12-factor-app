@@ -95,17 +95,21 @@ app.post('/newevent', (req, res) => {
             // Check if response body is empty or not valid JSON
             if (!responseBody || Object.keys(responseBody).length === 0) {
                 console.log("Event already exists");
+                console.log("Status: 405")
                 res.status(405).send({message: "Event already exists"});
                 return;
             }
             console.log("Successfully persisted state.");
+            console.log("Status: 200")
             res.status(200).send({ message: "Event created" });
         } catch (error) {
             console.log("Error parsing JSON:", error);
+            console.log("Status: 500")
             res.status(500).send({ message: "Error parsing JSON" });
         }    
     }).catch((error) => {
         console.log(error);
+        console.log("Status: 500")
         res.status(500).send({message: error});
     });
     send_notif(data)
@@ -153,17 +157,21 @@ app.delete('/event/:id', (req, res) => {
             // Check if response body is empty or not valid JSON
             if (!responseBody || Object.keys(responseBody).length === 0) {
                 console.log("Event not found");
+                console.log("Status: 404")
                 res.status(404).send({ message: "Event not found" });
                 return;
             }
             console.log("Successfully deleted event.");
+            console.log("Status: 204")
             res.status(204).send();
         } catch (error) {
             console.log("Error parsing JSON:", error);
+            console.log("Status: 500")
             res.status(500).send({ message: "Error parsing JSON" });
         }
     }).catch((error) => {
         console.log(error);
+        console.log("Status: 500")
         res.status(500).send({message: error});
     });
 });
@@ -211,17 +219,21 @@ app.get('/event/:id', (req, res) =>{
             // Check if response body is empty or not valid JSON
             if (!responseBody || Object.keys(responseBody).length === 0) {
                 console.log("Event not found");
+                console.log("Status: 404")
                 res.status(404).send({ message: "Event not found" });
                 return;
             }
             const parsedResponseBody = JSON.parse(responseBody);
+            console.log("Status: 200")
             res.status(200).json(parsedResponseBody);
         } catch (error) {
             console.log("Error parsing JSON:", error);
+            console.log("Status: 500")
             res.status(500).send({ message: "Error parsing JSON" });
         }        
     }).catch((error) => {
         console.log(error);
+        console.log("Status: 500")
         res.status(500).send({message: error});
     });
 })
@@ -277,17 +289,21 @@ app.put('/updateevent/:id', (req, res) => {
             // Check if response body is empty or not valid JSON
             if (!responseBody || Object.keys(responseBody).length === 0) {
                 console.log("Event not found");
+                console.log("Status: 404")
                 res.status(404).send({ message: "Event not found" });
                 return;
             }
             console.log("Successfully updated event.");
+            console.log("Status: 200")
             res.status(200).send({ message: "Event updated" });
         } catch (error) {
             console.log("Error parsing JSON:", error);
+            console.log("Status: 500")
             res.status(500).send({ message: "Error parsing JSON" });
         }
     }).catch((error) => {
         console.log(error);
+        console.log("Status: 500")
         res.status(500).send({message: error});
     });
 });
