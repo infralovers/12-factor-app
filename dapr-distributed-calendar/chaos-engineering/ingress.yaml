@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: chaos-ingress
+  namespace: chaos-testing
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`chaos.<ENV-NAME>-<ENV-USER-ID>-01.<ENV-ANIMAL>.<ENV-DOMAIN>`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: chaos-dashboard
+          port: 2333
