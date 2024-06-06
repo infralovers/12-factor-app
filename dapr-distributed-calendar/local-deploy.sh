@@ -59,7 +59,7 @@ fi
 
 # Install Python Requirements
 cd ~/12-factor-app/dapr-distributed-calendar/python
-pip3 install -r ./requirements.txt 
+pip3 install -r ./requirements.txt --break-system-packages
 
 # Prepare Node environment
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt-get install -y nodejs
