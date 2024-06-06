@@ -1,0 +1,14 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  namespace: 12-factor-app
+  name: pod-failure-example
+spec:
+  selector:
+    namespaces:
+      - 12-factor-app # the namespace of the system under test (SUT) you've deployed
+    labelSelectors:
+      app.kubernetes.io/instance: 12-factor-app # the label of the pod for chaos injection
+  mode: all # the mode to run chaos action; supported modes are one/all/fixed/fixed-percent/random-max-percent
+  action: pod-failure # the specific chaos action to inject; supported actions: pod-kill/pod-failure/container-kill
+  duration: 60s # duration for the injected chaos experiment

@@ -6,7 +6,7 @@ prometheus:
     enableFeatures:
      - exemplar-storage
     additionalScrapeConfigs:
-      - job_name: 'dapr'
+      - job_name: 'opentelemetry'
         honor_labels: true
         kubernetes_sd_configs:
           - role: pod
@@ -17,14 +17,3 @@ prometheus:
           - source_labels: [__meta_kubernetes_pod_annotation_dapr_collector_demo]
             action: keep
             regex: true
-      - job_name: 'traefik'
-        honor_labels: true
-        kubernetes_sd_configs:
-          - role: pod
-            namespaces:
-              own_namespace: true
-              names: [kube-system]
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_container_name]
-            action: keep
-            regex: "traefik"

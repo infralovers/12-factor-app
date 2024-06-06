@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app: kube-prometheus-stack
+    release: prometheus
+  name: prometheus-example-rules
+spec:
+  groups:
+  - name: example.rules
+    rules:
+      - alert: ExampleAlert
+        annotations:
+          message: |
+            I am an example alert!!
+        expr: vector(1)

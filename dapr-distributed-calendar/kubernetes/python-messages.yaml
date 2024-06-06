@@ -4,15 +4,18 @@ metadata:
   name: messages
   namespace: 12-factor-app
   labels:
+    app.kubernetes.io/instance: 12-factor-app
     app: messages
 spec:
   replicas: 1
   selector:
     matchLabels:
+      app.kubernetes.io/instance: 12-factor-app
       app: messages
   template:
     metadata:
       labels:
+        app.kubernetes.io/instance: 12-factor-app
         app: messages
       annotations:
         # instrumentation.opentelemetry.io/inject-python: "python-instrumentation"

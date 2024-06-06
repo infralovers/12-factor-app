@@ -34,7 +34,7 @@ spec:
       debug:
         verbosity: detailed
       otlp/jaeger:
-        endpoint: simplest-collector.observability:4317
+        endpoint: jaeger-collector.observability:4317
         tls:
             insecure: true
       prometheus:
