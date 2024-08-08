@@ -1,4 +1,4 @@
-apiVersion: opentelemetry.io/v1alpha1
+apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: otel-dapr
@@ -6,12 +6,12 @@ metadata:
   annotations:
     dapr_collector_demo: "true"
 spec:
-  config: |
+  config:
     receivers:
       otlp:
         protocols:
-          grpc:
-          http:
+          grpc: {}
+          http: {}
       prometheus:
         config:
           scrape_configs:
@@ -34,7 +34,7 @@ spec:
       debug:
         verbosity: detailed
       otlp/jaeger:
-        endpoint: jaeger-collector.observability:4317
+        endpoint: simplest-collector.observability:4317
         tls:
             insecure: true
       prometheus:
