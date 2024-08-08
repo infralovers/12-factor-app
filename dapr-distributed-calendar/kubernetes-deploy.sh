@@ -30,8 +30,9 @@ helm upgrade --install \
 
 # install jaeger (requires cert-manager) OPTIONAL
 kubectl create namespace observability
-kubectl create -f https://github.com/jaegertracing/jaeger-operator/releases/download/v1.38.0/jaeger-operator.yaml -n observability
-kubectl wait --for=condition=ready pod --all --timeout=200s -n observability
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm repo update
+helm install jaeger jaegertracing/jaeger-operator -n observability --wait
 kubectl apply -f jaeger/.
 
 # install prometheus OPTIONAL
@@ -75,7 +76,7 @@ helm install redis bitnami/redis --namespace 12-factor-app --wait
 kubectl apply -f kubernetes/.
 kubectl wait --for=condition=ready pod --all --timeout=200s -n 12-factor-app
 
-# setup locust for loadgeneration OPTIONAL
+# setup locust for load generation OPTIONAL
 kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
 helm repo add deliveryhero https://charts.deliveryhero.io/
 helm repo update

@@ -4,9 +4,11 @@ metadata:
   name: controller
   namespace: 12-factor-app
   labels:
+    app.kubernetes.io/instance: 12-factor-app
     app: controller
 spec:
   selector:
+    app.kubernetes.io/instance: 12-factor-app
     app: controller
   ports:
   - protocol: TCP
@@ -20,15 +22,18 @@ metadata:
   name: controller
   namespace: 12-factor-app
   labels:
+    app.kubernetes.io/instance: 12-factor-app
     app: controller
 spec:
   replicas: 1
   selector:
     matchLabels:
+      app.kubernetes.io/instance: 12-factor-app
       app: controller
   template:
     metadata:
       labels:
+        app.kubernetes.io/instance: 12-factor-app
         app: controller
       annotations:
         # instrumentation.opentelemetry.io/inject-nodejs: "node-instrumentation"

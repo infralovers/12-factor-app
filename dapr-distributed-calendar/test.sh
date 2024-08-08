@@ -55,7 +55,7 @@ curl --location 'http://'$ENDPOINT':'$PORT'/event/1' | jq
 
 # Delete event 1
 echo 'Delete event 1'
-curl --location --request DELETE 'http://'$ENDPOINT':3000/event/1' | jq
+curl --location --request DELETE 'http://'$ENDPOINT':'$PORT'/event/1' | jq
 
 # Delete event 1 again (should fail)
 echo 'Delete event 1 again (should fail)'
