@@ -5,9 +5,6 @@
 ```shell
 # dapr-distributed-calendar
 https://github.com/dapr/samples
-
-# distributed-calculator
-https://github.com/dapr/quickstarts
 ```
 
 ## dapr-distributed-calendar
@@ -33,17 +30,22 @@ DELETE: <http://localhost:3000/event/1>
 
 GET: <http://localhost:3000/event/1>
 
+### Local Setup
+
+```shell
+./local-setup.sh
+
+```
+
 ### Setup with docker-compose
 
 ```shell
-cd 12-factor-app/dapr-distributed-calendar
 docker-compose up
 ```
 
 ### Setup with Kubernetes
 
 ```shell
-cd 12-factor-app/dapr-distributed-calendar
 ./kubernetes-deploy.sh
 ```
 
@@ -89,9 +91,9 @@ curl -s http://localhost:8000/state
 ```
 
 ```bash
-curl -s -X PUT http://localhost:8000/state -H 'Content-Type: application/json' --data-raw '{"next": "12", "operation": "-" }' 
+curl -s -X PUT http://localhost:8000/state -H 'Content-Type: application/json' --data-raw '{"next": "12", "operation": "-" }'
 ```
 
 ```bash
-curl -s -X DELETE http://localhost:8000/state 
+curl -s -X DELETE http://localhost:8000/state
 ```
