@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
       - name: controller
-        image: mati007thm/dapr-distributed-calendar_controller:manual
+        image: ghcr.io/infralovers/12-factor-app-node
         env:
         - name: APP_PORT
           value: "3000"
