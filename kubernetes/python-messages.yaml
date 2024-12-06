@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: messages
-        image: mati007thm/dapr-distributed-calendar_messages:manual
+        image: ghcr.io/infralovers/12-factor-app-python
         env:
         - name: "APP_PORT"
           value: "5000"

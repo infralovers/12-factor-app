@@ -22,6 +22,7 @@ jobs:
       # MONDOO_SERVICE_ACCOUNT: "${{ fromJson(secrets.VAULT_KV_1D187965_OP_MONDOO_PACKER_AGENT).password }}"
     with:
       dockerfile: "${{ matrix.container }}/Dockerfile"
+      image_name: "${{ github.repository }}/${{matrix.container}}"
       score: 50
       platforms: "linux/amd64, linux/arm64"
       release: false
