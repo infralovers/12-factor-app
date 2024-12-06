@@ -1,6 +1,6 @@
 
 #first stage - building golang artifact
-FROM golang:1.20.12-alpine as builder
+FROM golang:1.20.12-alpine AS builder
 WORKDIR /src
 COPY . .
 RUN go mod download
