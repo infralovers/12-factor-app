@@ -3,10 +3,8 @@ name: Containers - distributed-calendar
 on:
   push:
     branches: [ 'main' ]
-    paths: [ 'go/**', 'node/**', 'python/**' ]
   pull_request:
     branches: [ 'main' ]
-    paths: [ 'go/**', 'node/**', 'python/**' ]
 
 jobs:
   build:
@@ -26,3 +24,8 @@ jobs:
       score: 50
       platforms: "linux/amd64, linux/arm64"
       release: false
+
+  release:
+    uses: infralovers/.github/.github/workflows/release.yml@main
+    secrets:
+      BOT_ACCESS_TOKEN: "${{ fromJSON(secrets.VAULT_KV_1D187965_OP_GITHUB_INFRALOVERS).PAT }}"
