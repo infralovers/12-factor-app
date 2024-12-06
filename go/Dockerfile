@@ -3,8 +3,8 @@
 FROM golang:1.20.12-alpine AS builder
 WORKDIR /src
 COPY . .
-RUN go mod download
-RUN CGO_ENABLED=0 go build -o app .
+RUN go mod download \
+    && CGO_ENABLED=0 go build -o app .
 
 # output container ...
 FROM debian:buster-slim
