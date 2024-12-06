@@ -5,9 +5,6 @@
 ```shell
 # dapr-distributed-calendar
 https://github.com/dapr/samples
-
-# distributed-calculator
-https://github.com/dapr/quickstarts
 ```
 
 ## dapr-distributed-calendar
@@ -33,17 +30,22 @@ DELETE: <http://localhost:3000/event/1>
 
 GET: <http://localhost:3000/event/1>
 
+### Local Setup
+
+```shell
+./local-setup.sh
+
+```
+
 ### Setup with docker-compose
 
 ```shell
-cd 12-factor-app/dapr-distributed-calendar
 docker-compose up
 ```
 
 ### Setup with Kubernetes
 
 ```shell
-cd 12-factor-app/dapr-distributed-calendar
 ./kubernetes-deploy.sh
 ```
 
@@ -58,40 +60,4 @@ Every part of the deployment process that is not required, has a `OPTIONAL` comm
 
 ### About Auto-Instrumentation
 
-It is theoretically possible to use auto-instrumentation for kubernetes, but sadly this is very buggy especially Go and Python. and even those that do work do not provide a very good instrumentation when it comes to metrics, traces and logs. Therefore thy have been uncommented in the code, but can still be found within the folder `12-factor-app/dapr-distributed-calendar/otel`.
-
-## distributed-calculator
-
-The distributed-calculator works, and I added DELETE and PUT to the already existing POST and GET requests:
-
-```bash
-curl -s http://localhost:8000/calculate/add -H Content-Type:application/json --data @operands.json
-```
-
-```bash
-curl -s http://localhost:8000/calculate/subtract -H Content-Type:application/json --data @operands.json
-```
-
-```bash
-curl -s http://localhost:8000/calculate/divide -H Content-Type:application/json --data @operands.json
-```
-
-```bash
-curl -s http://localhost:8000/calculate/multiply -H Content-Type:application/json --data @operands.json
-```
-
-```bash
-curl -s http://localhost:8000/persist -H Content-Type:application/json --data @persist.json
-```
-
-```bash
-curl -s http://localhost:8000/state
-```
-
-```bash
-curl -s -X PUT http://localhost:8000/state -H 'Content-Type: application/json' --data-raw '{"next": "12", "operation": "-" }' 
-```
-
-```bash
-curl -s -X DELETE http://localhost:8000/state 
-```
+It is theoretically possible to use auto-instrumentation for kubernetes, but sadly this is very buggy especially Go and Python. and even those that do work do not provide a very good instrumentation when it comes to metrics, traces and logs. Therefore thy have been uncommented in the code, but can still be found within the folder `12-factor-app/otel`.
