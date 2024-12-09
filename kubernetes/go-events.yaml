@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: go-events
-        image: ghcr.io/infralovers/12-factor-app-go
+        image: quay.io/infralovers/12-factor-app/go
         env:
         - name: APP_PORT
           value: "6000"
