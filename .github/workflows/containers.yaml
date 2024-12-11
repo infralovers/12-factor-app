@@ -22,7 +22,7 @@ jobs:
       dockerfile: "${{ matrix.container }}/Dockerfile"
       image_name: "${{ github.repository }}/${{matrix.container}}"
       score: 50
-      platforms: "linux/amd64, linux/arm64"
+#      platforms: "linux/amd64, linux/arm64"
       release: false
 
   release:
