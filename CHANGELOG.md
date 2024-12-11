@@ -1,3 +1,10 @@
+## 1.0.1 (2024-12-11)
+
+#### Bug Fixes
+
+* update container registry ref (#22) (70d90bd6)
+
+
 ## 1.0.0 (2024-12-06)
 
 #### Feature
