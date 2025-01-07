@@ -47,14 +47,14 @@ fi
 source /etc/profile.d/golang_path.sh
 # Setup dapr config
 mkdir -p ~/.dapr
-cp -r ~/12-factor-app/dapr-distributed-calendar/local/components ~/.dapr
+cp -r ~/12-factor-app/local/components ~/.dapr
 
 # Build Golang application
-cd ~/12-factor-app/dapr-distributed-calendar/go
+cd ~/12-factor-app/go
 go build go_events.go
 
 # Install Python Requirements
-cd ~/12-factor-app/dapr-distributed-calendar/python
+cd ~/12-factor-app/python
 if [ ! -d "venv" ]; then
     virtualenv venv --python /usr/bin/python3
 fi
@@ -62,5 +62,5 @@ source venv/bin/activate
 pip3 install -r ./requirements.txt
 
 # Install Node Requirements
-cd ~/12-factor-app/dapr-distributed-calendar/node
+cd ~/12-factor-app/node
 npm install
